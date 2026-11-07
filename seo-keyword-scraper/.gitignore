@@ -1,0 +1,12 @@
+# Virtual env and Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+
+# Output files (allow sample_*.csv for repo examples)
+keywords.csv
+*.csv
+*.json
+!sample_*.csv

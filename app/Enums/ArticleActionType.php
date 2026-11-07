@@ -1,0 +1,16 @@
+<?php
+
+namespace App\Enums;
+
+enum ArticleActionType: string
+{
+    case UPDATE_SECTION = 'UPDATE_SECTION';
+    case ADD_SECTION = 'ADD_SECTION';
+    case DELETE_SECTION = 'DELETE_SECTION';
+    case MOVE_SECTION = 'MOVE_SECTION';
+    case CHANGE_TITLE = 'CHANGE_TITLE';
+    case CHANGE_META = 'CHANGE_META';
+    case REWRITE_ARTICLE = 'REWRITE_ARTICLE';
+    case CHANGE_TONE = 'CHANGE_TONE';
+    case SHORTEN_OR_EXPAND_ARTICLE = 'SHORTEN_OR_EXPAND_ARTICLE';
+}
