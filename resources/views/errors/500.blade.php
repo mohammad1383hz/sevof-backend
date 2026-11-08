@@ -1,10 +1,10 @@
 @extends('errors.layout')
 
 @section('code', '500')
-@section('title', 'یه مشکلی از سمت ما پیش اومد')
-@section('description', 'سرورهای یوتیکس با یه خطای غیرمنتظره مواجه شدن. تیم فنی مطلع شده، لطفاً چند دقیقه دیگه دوباره امتحان کن.')
-@section('footnote', 'خطای داخلی سرور.')
-@section('secondaryLabel', 'تلاش دوباره')
+@section('title', 'Something went wrong on our side')
+@section('description', 'Sevof hit an unexpected error. Please try again in a few minutes.')
+@section('footnote', 'Internal server error.')
+@section('secondaryLabel', 'Try again')
 @section('secondaryAction', 'window.location.reload()')
 
 @section('icon')

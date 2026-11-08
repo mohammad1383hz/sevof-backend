@@ -1,52 +1,42 @@
-{{-- مسیر مقصد: resources/views/errors/layout.blade.php --}}
-{{--
-    این فایل برای رفع ارور زیر ساخته شده:
-    "View [errors.layout] not found. (View: .../resources/views/errors/500.blade.php)"
-
-    یعنی فایل errors/500.blade.php شما با @extends('errors.layout') به این فایل
-    نیاز داره ولی وجود نداشت. این یک layout ساده و مستقل (بدون وابستگی به
-    layouts.admin، چون در لحظه‌ی بروز ارور 500 ممکنه خود لایوت اصلی هم مشکل داشته باشد)
-    با Tailwind (از CDN) ساخته شده.
-
-    نکته مهم: اگر resources/views/errors/500.blade.php شما از section هایی
-    غیر از content/title (مثلاً code یا message) استفاده می‌کند، محتوای آن
-    فایل را برایم بفرست تا این layout را دقیقاً هماهنگ با آن تنظیم کنم.
---}}
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@yield('title', 'خطایی رخ داده است')</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="robots" content="noindex">
+    <title>@yield('code') · @yield('title') · Sevof</title>
+    <style>
+        *{box-sizing:border-box}
+        body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;background:#F4F2EC;color:#1E2A28;font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+        .card{width:100%;max-width:440px;padding:32px;text-align:center;background:#fff;border:1px solid #DAD5C7;border-radius:16px;box-shadow:0 1px 2px rgba(30,42,40,.06)}
+        .icon{display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;margin-bottom:12px;border-radius:50%;background:#DCEFEA;color:#1B6F63}
+        .icon svg{width:32px;height:32px}
+        .code{font-size:40px;font-weight:700;line-height:1.2}
+        h1{margin:4px 0 8px;font-size:20px}
+        p{margin:0;color:#5B6560;font-size:15px}
+        .foot{margin-top:12px;color:#9BA69F;font-size:13px}
+        .actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:24px}
+        .btn{display:inline-block;padding:9px 18px;border-radius:10px;font:600 14px/1.4 inherit;text-decoration:none;cursor:pointer;border:1px solid #1B6F63}
+        .btn-primary{background:#1B6F63;color:#fff}
+        .btn-secondary{background:#fff;color:#1B6F63}
+    </style>
 </head>
-<body class="bg-slate-50 min-h-screen flex items-center justify-center p-4 font-sans">
-
-    <div class="max-w-md w-full text-center bg-white border border-slate-200 rounded-xl shadow-sm p-8">
-
-        <div class="mx-auto mb-4 w-14 h-14 rounded-full bg-red-100 flex items-center justify-center">
-            <svg class="w-7 h-7 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
-            </svg>
-        </div>
-
-        @hasSection('code')
-            <div class="text-4xl font-bold text-slate-800 mb-1">@yield('code')</div>
+<body>
+    @php($sevofFront = rtrim((string) config('app.front_url'), '/') ?: url('/'))
+    <main class="card">
+        <div class="icon" aria-hidden="true">@yield('icon')</div>
+        <div class="code">@yield('code')</div>
+        <h1>@yield('title', 'Something went wrong')</h1>
+        <p>@yield('description')</p>
+        @hasSection('footnote')
+            <p class="foot">@yield('footnote')</p>
         @endif
-
-        <h1 class="text-lg font-semibold text-slate-800 mb-2">
-            @yield('title', 'خطایی رخ داده است')
-        </h1>
-
-        <div class="text-slate-500 text-sm leading-6">
-            @yield('content', 'مشکلی در سرور رخ داده. لطفاً دوباره تلاش کنید یا با پشتیبانی تماس بگیرید.')
+        <div class="actions">
+            <a class="btn btn-primary" href="{{ $sevofFront }}">Go to Sevof</a>
+            @hasSection('secondaryLabel')
+                <button type="button" class="btn btn-secondary" onclick="@yield('secondaryAction', 'history.back()')">@yield('secondaryLabel')</button>
+            @endif
         </div>
-
-        <a href="{{ url('/') }}"
-           class="inline-block mt-6 bg-brand-600 hover:bg-brand-700 transition-colors text-white font-medium rounded-lg px-5 py-2 text-sm shadow-sm">
-            بازگشت به صفحه اصلی
-        </a>
-    </div>
-
+    </main>
 </body>
 </html>

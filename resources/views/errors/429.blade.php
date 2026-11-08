@@ -1,10 +1,10 @@
 @extends('errors.layout')
 
 @section('code', '429')
-@section('title', 'یه‌کم آروم‌تر!')
-@section('description', 'در بازه‌ی زمانی کوتاهی درخواست‌های زیادی فرستادی. چند لحظه صبر کن و دوباره امتحان کن.')
-@section('footnote', 'تعداد درخواست‌ها بیش از حد مجاز بوده.')
-@section('secondaryLabel', 'تلاش دوباره')
+@section('title', 'Slow down a little')
+@section('description', 'You sent too many requests in a short time. Wait a moment and try again.')
+@section('footnote', 'Too many requests.')
+@section('secondaryLabel', 'Try again')
 @section('secondaryAction', 'window.location.reload()')
 
 @section('icon')

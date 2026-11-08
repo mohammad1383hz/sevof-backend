@@ -21,6 +21,9 @@ return Application::configure(basePath: dirname(__DIR__))
         }
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // There is no Blade login page: API guests get 401, others go to the panel's login.
+        $middleware->redirectGuestsTo(fn ($request) => $request->is('api/*') ? null : rtrim((string) config('app.front_url'), '/').'/login');
+
         $middleware->alias([
             'applicant.match' => \App\Http\Middleware\EnsureTokenMatchesApplicant::class,
             'agent.signature' => \App\Http\Middleware\VerifyAgentSignature::class,
@@ -31,6 +34,9 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        // API clients always get JSON (e.g. 401), never a redirect to a non-existent login page.
+        $exceptions->shouldRenderJsonWhen(fn ($request) => $request->is('api/*') || $request->expectsJson());
+
         $exceptions->report(function (\Throwable $e): void {
             Log::error($e->getMessage(), [
                 'exception' => get_class($e),
