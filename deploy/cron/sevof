@@ -1,0 +1,9 @@
+# Sevof scheduler: /etc/cron.d/sevof (owner root, mode 644, keep the trailing newline).
+# Runs as www-data so cache and log files stay writable by PHP-FPM and Horizon.
+# Every task (minute agent loop, daily product refresh 03:00, keyword research 03:00,
+# Search Console sync 04:30, indexing check 05:30, auto-refresh 07:00, limits 00:30)
+# is defined in routes/console.php; times are APP_TIMEZONE (UTC).
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+* * * * * www-data cd /var/www/sevof-backend && /usr/bin/php artisan schedule:run >> /dev/null 2>&1
