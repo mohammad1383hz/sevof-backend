@@ -42,7 +42,7 @@ class SearchConsoleInsightsController extends Controller
         $setting = AgentSetting::firstOrCreate(['site_id' => $site->id]);
 
         return response()->json([
-            'connection' => $connection ? ['status' => $connection->status, 'last_error' => $connection->last_error] : null,
+            'connection' => $connection ? ['status' => $connection->status, 'last_error' => $connection->last_error, 'email' => $connection->google_email] : null,
             'property' => $property ? [
                 'property_url' => $property->property_url,
                 'sync_status' => $property->sync_status,

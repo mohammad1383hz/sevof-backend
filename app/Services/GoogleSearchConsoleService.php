@@ -38,9 +38,11 @@ class GoogleSearchConsoleService
             'client_id' => $this->clientId(),
             'redirect_uri' => $this->redirectUri(),
             'response_type' => 'code',
-            'scope' => self::READONLY_SCOPE,
+            // openid email: only to show the user which Google account is connected
+            'scope' => self::READONLY_SCOPE.' openid email',
             'access_type' => 'offline',
-            'prompt' => 'consent',
+            // select_account: let the user pick a different Google account
+            'prompt' => 'consent select_account',
             'include_granted_scopes' => 'true',
             'state' => $state,
         ]);
@@ -74,6 +76,7 @@ class GoogleSearchConsoleService
         $connection = GoogleSearchConsoleConnection::updateOrCreate(
             ['user_id' => $user->id],
             [
+                'google_email' => $this->emailFromIdToken((string) $response->json('id_token')),
                 'access_token' => $response->json('access_token'),
                 'refresh_token' => $response->json('refresh_token') ?: $existing?->refresh_token,
                 'expires_at' => now()->addSeconds((int) $response->json('expires_in', 3600)),
@@ -399,6 +402,29 @@ class GoogleSearchConsoleService
         ]);
 
         return $connection->fresh()->access_token;
+    }
+
+    /** The id_token came straight from Google's token endpoint over HTTPS, so no signature check is needed (per Google docs). */
+    public function emailFromIdToken(string $idToken): ?string
+    {
+        $payload = explode('.', $idToken)[1] ?? '';
+        $claims = json_decode((string) base64_decode(strtr($payload, '-_', '+/')), true);
+
+        return is_array($claims) && is_string($claims['email'] ?? null) ? $claims['email'] : null;
+    }
+
+    /** Fully disconnect the user's Google account: revoke the token (best effort) and delete the connection and every site's property */
+    public function disconnectAccount(GoogleSearchConsoleConnection $connection): void
+    {
+        try {
+            Http::asForm()->timeout(10)->post('https://oauth2.googleapis.com/revoke', [
+                'token' => $connection->refresh_token ?: $connection->access_token,
+            ]);
+        } catch (\Throwable $exception) {
+            report($exception);
+        }
+
+        $connection->delete();
     }
 
     protected function markConnectionError(GoogleSearchConsoleConnection $connection, string $error): void

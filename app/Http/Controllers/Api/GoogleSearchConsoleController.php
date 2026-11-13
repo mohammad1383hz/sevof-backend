@@ -58,6 +58,7 @@ class GoogleSearchConsoleController extends Controller
             'connection' => $connection ? [
                 'status' => $connection->status,
                 'last_error' => $connection->last_error,
+                'email' => $connection->google_email,
             ] : null,
             'property' => $property ? $this->propertyPayload($property) : null,
         ]);
@@ -167,6 +168,21 @@ class GoogleSearchConsoleController extends Controller
         ]);
     }
 
+    /** Disconnect the user's Google account (for all their sites) so they can connect a different one */
+    public function disconnectAccount(Request $request, Site $site, GoogleSearchConsoleService $service): JsonResponse
+    {
+        $this->authorizeSiteAccess($request, $site);
+
+        $connection = GoogleSearchConsoleConnection::where('user_id', $request->user()->id)->first();
+        if ($connection) {
+            $service->disconnectAccount($connection);
+        }
+
+        return response()->json([
+            'message' => 'Your Google account was disconnected.',
+        ]);
+    }
+
     protected function propertyPayload(SiteSearchConsoleProperty $property): array
     {
         return [
@@ -186,6 +202,6 @@ class GoogleSearchConsoleController extends Controller
 
     protected function frontendUrl(): string
     {
-        return rtrim((string) config('seobot.frontend_url', config('app.url')), '/');
+        return rtrim((string) config('app.frontend_url') ?: config('app.url'), '/');
     }
 }

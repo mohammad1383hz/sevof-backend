@@ -113,6 +113,7 @@ Route::get('tickets', [TicketController::class, 'index']);
         Route::post('sync', [GoogleSearchConsoleController::class, 'sync']);
         Route::get('queries', [GoogleSearchConsoleController::class, 'queries']);
         Route::delete('/', [GoogleSearchConsoleController::class, 'disconnect']);
+        Route::delete('account', [GoogleSearchConsoleController::class, 'disconnectAccount']);
         Route::get('insights', [SearchConsoleInsightsController::class, 'show']);
     });
 
